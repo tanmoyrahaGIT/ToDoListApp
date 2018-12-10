@@ -1,24 +1,96 @@
-﻿<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+﻿<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+
 <div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-        a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-        is an ideal platform for building RESTful applications on the .NET Framework.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
+    <div class="col-md-12" style="padding-top:10px;">
+
+        @Html.ActionLink("Create New", "Create") <br/>
+        <div id="dvToDoList" style="padding-top:20px;"></div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+    var dvHTML = $("#dvToDoList");
+
+    $.ajax({
+        type: 'GET',
+        url: '/api/ToDoList',
+        dataType: 'json',
+        success: function (data) {
+            
+            dvHTML.append("<table width=45% style='padding-top:10px;'> <tr width='100%' style='font-weight:bold;background-color:aqua; border-color:black;'><td width='30%'> Title </td><td width='30%' style='padding-left:55px;'> Description </td> <td width='40%' style='padding-left:89px;' colspan=2> Action </td></tr> ");
+
+            $.each(data, function (index, val) {
+
+                dvHTML.append("<tr style='border-color:black;'>");
+                dvHTML.append("<td><input type='text' id='txtTitle_" + val.Id + "' value='" + val.Title + "' /> </td>");
+                dvHTML.append("<td><input type='text' id='txtDesc_" + val.Id + "' value='" + val.Description + "' /> </td>");                
+                dvHTML.append("<td><input type='button' id='btnEdit" + val.Id + "' value='Update' onclick=fnEdit(" + val.Id + ") /></td>");
+                dvHTML.append("<td><input type='button' id='btnDelete" + val.Id + "' value='Delete' onclick=fnDelete(" + val.Id + ") /> </td>");
+                dvHTML.append("</tr>");
+
+            });
+
+            dvHTML.append("</table>");
+        }
+
+    });
+
+    
+
+});
+
+    function fnEdit(id) {
+
+        var studentdata = {
+            Id: id,
+            FirstName: $("#txtFirstName_" + id + "").val().trim(),
+            LastName: $("#txtLastName_" + id + "").val().trim()
+            //,
+            //StandardID: $("#ddlStandard").val().trim()
+        }
+
+        $.ajax({
+            type: 'PUT',
+            url: '/api/Student/Put',
+            dataType: 'json',
+            data: studentdata,
+            success: function (d) {
+                if (d != null) {
+                    alert("Data updated successfully");
+                    window.location.reload();
+                }
+            },
+            error: function () {
+                alert("Error occured while deleting data");
+            }
+
+        });
+
+    }
+    function fnDelete(id) {
+
+        if (confirm("Sure you want to delete?") == true) {
+
+            $.ajax({
+                type: 'DELETE',
+                url: '/api/Student/Delete?id=' + id,
+                dataType: 'json',
+                success: function (d) {
+                    if (d != '') {
+                        alert("Data deleted successfully");
+                        window.location.reload();
+                    }
+
+                },
+                error: function () {
+                    alert("Error occured while deleting data");
+                }
+
+            });
+        }
+
+
+    }
+</script>

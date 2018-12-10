@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create New</h2>
+<div class="row">
+    <div class="col-md-4">
+        Title:
+    </div>
+    <div class="col-md-8">
+        @Html.TextBox("title")
+    </div>
+    <div class="col-md-4">
+        Description:
+    </div>
+    <div class="col-md-8">
+        @Html.TextArea("description")
+    </div>
+    <div class="col-md-12">
+        <input type="button" id="btnSubmit"  value="Submit"   />
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#btnSubmit").click(function () {
+
+            var _data = {
+                Title: $("#title").val().trim(),
+                Description: $("#description").val().trim()                
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/ToDoList/Post',
+                dataType: 'json',
+                data: _data,
+                success: function (d) {
+                    if (d != null) {
+
+                        alert("Data saved successfully");
+                        window.location.reload();
+                    }
+
+                },
+                error: function () {
+                    alert("Error occured while saving data");
+                }
+
+            });
+
+
+        });
+
+        $("#btnGetAll").click(function () {
+            $.ajax({
+
+                type: 'POST',
+                url: '/Home/GetAllStudents',
+                success: function () {
+                    window.location.href = '/Home/GetAllStudents';
+                }
+            });
+        });
+
+    });
+
+</script>
